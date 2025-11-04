@@ -1,0 +1,241 @@
+MVP Document – CCCSP FUTA Alumni Connect
+1. Purpose
+To create a secure, social, and interactive mobile/web platform for alumni and final-year students of the Celestial Church of Christ, Student Parish, FUTA to connect, network, share updates, and engage in spiritual and personal development.
+
+2. Target Users
+Current Members: Final-year students
+
+Alumni Members: Graduated members of CCCSP FUTA
+
+Admins/Moderators: Fellowship leaders and technical admins
+
+3. Core MVP Features
+1. User Authentication
+Signup via email or phone number
+
+Login with username/email & password
+
+Verification through OTP or email link
+
+(Optional in future) Social login with Google/Facebook
+
+2. User Profile
+Full name
+
+Profile photo
+
+Year of graduation
+
+Department/faculty
+
+Fellowship role (e.g., Chorister, Evangelism Unit)
+
+Bio
+
+Contact info (optional & with visibility settings)
+
+3. Group Channels (Sets)
+Each graduation year can create or join their Set group
+
+Set admins to manage group channels
+
+Media & file sharing
+
+(Optional in future) Voice note & emoji support
+
+4. One-on-One Chat
+Secure private messaging (encrypted)
+
+Seen/delivered indicators
+
+Media & file sharing
+
+5. Event Section
+Create/view upcoming events
+
+RSVP to events
+
+Event reminders
+
+6. Search & Discovery
+Search by name, set, or department
+
+Suggested connections
+
+7. Notifications
+Push notifications for messages & events
+
+Notification preferences in settings
+
+Fellowship-wide announcements
+
+8. Settings & Privacy Controls
+Profile visibility settings
+
+Block/report users
+
+Notification preferences
+
+9. User Roles
+Member: Regular alumni with standard access
+
+Set Admins: Manage individual set channels
+
+Global Admins: Fellowship-level administrators
+
+4. Non-Functional Requirements (MVP Scope)
+Secure & encrypted data
+
+Mobile-first design
+
+Scalable backend infrastructure
+
+Offline caching for recent messages
+
+Responsive web version
+
+5. Backend Development (Your Scope in Golang)
+Core Backend Modules
+Authentication Service
+
+REST or GraphQL APIs for signup/login/OTP verification
+
+JWT-based session management
+
+Password hashing & encryption
+
+User Profile Service
+
+CRUD for user profiles
+
+Privacy control management
+
+Group & Chat Service
+
+Real-time messaging (WebSocket/Socket.IO equivalent in Go)
+
+Media upload & retrieval via AWS S3
+
+Group creation & membership management
+
+Event Service
+
+Event CRUD APIs
+
+RSVP tracking
+
+Notification Service
+
+Integration with Firebase Cloud Messaging (FCM)
+
+Event & message push notifications
+
+Search Service
+
+Search users/groups
+
+Suggested connections logic
+
+6. Tech Stack (Backend)
+Language: Golang
+
+Frameworks/Libraries: Gin/Fiber for REST API, Gorilla/WebSocket for real-time chat
+
+Database: PostgreSQL
+
+Cache: Redis (for sessions, notifications, message queue)
+
+Storage: AWS S3 (media & file uploads)
+
+Authentication: JWT + OTP service (e.g., Twilio for SMS, SendGrid for email)
+
+Deployment: Docker + AWS EC2 or ECS
+
+CI/CD: GitHub Actions
+
+Testing: Go testing package, Postman for API testing
+
+7. Development Roadmap (Backend Focus)
+Phase 1 – Planning & Setup
+
+Define data models (User, Group, Message, Event)
+
+Set up Golang project structure
+
+Configure PostgreSQL & Redis
+
+Phase 2 – Core Backend APIs
+
+User authentication (email/phone OTP)
+
+Profile CRUD
+
+Group & messaging API
+
+Event API
+
+Phase 3 – Real-Time Communication
+
+WebSocket server for chat
+
+Message delivery & seen status
+
+Phase 4 – Notifications
+
+Integrate FCM for push notifications
+
+Event reminders
+
+Phase 5 – Testing & Deployment
+
+API testing (Postman)
+
+Unit testing in Go
+
+Dockerize backend
+
+Deploy to AWS
+
+
+go mod vendor
+
+go build -mod=vendor -o alumni-app ./cmd/server
+
+
+
+Description
+
+As a backend developer,
+I want to generate and manage JWT tokens after user login,
+So that authenticated users can securely access protected endpoints with session tracking.
+
+Work to Be Done
+
+Generate JWT token upon successful login (from /login endpoint)
+
+Include user ID, email, and expiration timestamp in the payload
+
+Use environment-configured secret for signing tokens
+
+Middleware for JWT validation on protected routes
+
+Check token format, signature, and expiry
+
+Reference
+
+Signup/Login flow: SCRUM-10
+
+OTP Verification dependency: SCRUM-12
+
+JWT Library: github.com/golang-jwt/jwt
+
+Example protected route: /get-user-profile
+
+Sign-Off Criteria
+
+JWTs are securely generated on login
+
+Valid JWTs allow access to authorized resources
+
+Middleware is reusable across routes
+

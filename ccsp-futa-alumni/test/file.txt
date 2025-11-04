@@ -1,0 +1,33 @@
+/backend
+│
+├── Dockerfile
+├── docker-compose.yml
+├── go.mod
+├── go.sum
+├── main.go                   // Entry point
+│
+├── /config
+│   └── config.go             // Environment configs (Redis address, JWT Secret etc.)
+│
+├── /controllers
+│   ├── auth_controller.go    // Handlers for /auth endpoints
+│
+├── /models
+│   └── user.go               // User model definition (GORM)
+│
+├── /routes
+│   └── routes.go             // All Gin routes
+│
+├── /services
+│   ├── auth_service.go       // Password reset, Email verification logic
+│   ├── email_service.go      // Mail sending logic
+│   └── jwt_service.go        // JWT token generation/validation
+│
+├── /utils
+│   ├── hash.go               // Password hashing utilities
+│   └── otp.go                // OTP generation logic
+│
+├── /tests
+│   ├── auth_test.go          // Unit + Integration tests (Ginkgo/Gomega)
+│
+└── .env                      // Environment Variables (JWT_SECRET, REDIS_ADDR, etc.)

@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: ccsp-futa-alumni-backend
+    env: go
+    buildCommand: go build -o main .
+    startCommand: ./main
+    plan: free
+    envVars:
+      - key: PORT
+        value: 10000
