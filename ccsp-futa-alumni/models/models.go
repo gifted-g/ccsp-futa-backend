@@ -22,6 +22,10 @@ type User struct {
 	Active       bool      `gorm:"default:true" json:"active"`
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
+	
+    FullName     string // <-- ADD THIS
+  
+
 
 	Profile Profile `gorm:"constraint:OnDelete:CASCADE" json:"profile"`
 }
@@ -38,6 +42,7 @@ type Profile struct {
 	DisplayName   string    `json:"display_name"`
 	Bio           string    `gorm:"type:text" json:"bio"`
 	Location      string    `json:"location"`
+	Phone        string    `json:"phone"`
 	ProfileImgURL string    `json:"profile_image_url"`
 	UpdatedAt     time.Time `json:"updated_at"`
 }

@@ -1,15 +1,15 @@
 package controllers
 
 import (
-    "ccsp-futa-alumni/db"
+    "ccsp-futa-alumni/db" // Assumed GORM connection is here
     "ccsp-futa-alumni/models"
-    "database/sql"
+   // "database/sql"
     "encoding/json"
-   // "log"
     "net/http"
     "os"
     "time"
-
+    "errors" 
+    "gorm.io/gorm"
     "github.com/golang-jwt/jwt/v5"
     "golang.org/x/crypto/bcrypt"
     "github.com/google/uuid"
@@ -38,10 +38,12 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
     id := uuid.New().String()
 
-    _, err = db.DB.Exec(`INSERT INTO users (id, full_name, email, phone, password) VALUES ($1, $2, $3, $4, $5)`,
+    // FIX 1: Use GORM's Exec which returns a *gorm.DB object. Check the .Error property.
+    result := db.DB.Exec(`INSERT INTO users (id, full_name, email, phone, password_hash) VALUES ($1, $2, $3, $4, $5)`,
         id, input.FullName, input.Email, input.Phone, string(hashedPassword))
 
-    if err != nil {
+    // Check the error property on the GORM result object
+    if result.Error != nil {
         http.Error(w, "Email or phone already exists", http.StatusConflict)
         return
     }
@@ -60,13 +62,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Invalid input", http.StatusBadRequest)
         return
     }
+ 
     var user models.User
 
+    // FIX 1: Use GORM's Raw().Scan() to execute the query and map result to the 'user' struct.
+    // FIX 2: Assuming 'user' struct now contains 'FullName' and 'PasswordHash'
+    err := db.DB.Raw(`SELECT id, full_name, email, phone, password_hash, created_at FROM users WHERE email = ?`, input.Email).
+        Scan(&user).Error 
 
-    err := db.DB.QueryRow(`SELECT id, full_name, email, phone, password, created_at FROM users WHERE email = $1`, input.Email).
-        Scan(&user.ID, &user.FullName, &user.Email, &user.Phone, &user.Password, &user.CreatedAt)
-
-    if err == sql.ErrNoRows {
+    if errors.Is(err, gorm.ErrRecordNotFound) { // Check for GORM's 'no rows' error
         http.Error(w, "Email not found", http.StatusUnauthorized)
         return
     } else if err != nil {
@@ -74,7 +78,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
+    if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(input.Password)); err != nil {
         http.Error(w, "Incorrect password", http.StatusUnauthorized)
         return
     }

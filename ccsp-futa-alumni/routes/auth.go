@@ -5,7 +5,9 @@ import (
 	"ccsp-futa-alumni/handlers"
 )
 
-func RegisterAuthRoutes(rg *gin.RouterGroup) {
+// Renamed function to RegisterAuthSubRoutes to avoid conflict with a similarly named 
+// function in routes/routes.go (as indicated by the error details).
+func RegisterAuthSubRoutes(rg *gin.RouterGroup) {
 	auth := rg.Group("/auth")
 	{
 		auth.POST("/register", handlers.RegisterHandler)

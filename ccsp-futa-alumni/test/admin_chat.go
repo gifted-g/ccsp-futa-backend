@@ -7,8 +7,8 @@ import (
     "testing"
 
     "github.com/gin-gonic/gin"
-    "yourapp/handlers"
-    "yourapp/middleware"
+    "ccsp-futa-alumni/handlers"   // FIXED import prefix
+    "ccsp-futa-alumni/middleware"
 )
 
 func TestAdminMiddlewareBlocksNonAdmin(t *testing.T) {

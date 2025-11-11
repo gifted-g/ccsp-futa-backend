@@ -26,4 +26,4 @@ func IsAdmin() gin.HandlerFunc {
         c.Next()
     }
 }
-(Assumes your JWT middleware in internal/auth/middleware.go sets c.Set("role", ...).)
+//(Assumes your JWT middleware in internal/auth/middleware.go sets c.Set("role", ...).)

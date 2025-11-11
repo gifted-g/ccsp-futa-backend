@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"ccsp-futa-alumni/db"
+	appdb "ccsp-futa-alumni/db" // FIX: Using alias 'appdb' to avoid conflict
 	"ccsp-futa-alumni/models"
 
 	"github.com/gin-gonic/gin"
@@ -24,7 +24,7 @@ type ProfileUpdateReq struct {
 func GetProfileHandler(c *gin.Context) {
 	uid := c.Param("user_id")
 	var p models.Profile
-	if err := db.DB.Where("user_id = ?", uid).First(&p).Error; err != nil {
+	if err := appdb.DB.Where("user_id = ?", uid).First(&p).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "profile not found"})
 		return
 	}
@@ -42,10 +42,11 @@ func UpdateProfileHandler(c *gin.Context) {
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return
 	}
-	if err := db.DB.Model(&models.Profile{}).Where("user_id = ?", uid).Updates(models.Profile{
+	// NOTE: This assumes 'Phone' has been added to models.Profile
+	if err := appdb.DB.Model(&models.Profile{}).Where("user_id = ?", uid).Updates(models.Profile{
 		DisplayName: req.DisplayName,
 		Bio:         req.Bio,
-		Phone:       req.Phone,
+		Phone:       req.Phone, 
 		Location:    req.Location,
 		UpdatedAt:   time.Now(),
 	}).Error; err != nil {
@@ -70,9 +71,9 @@ func RequestAvatarUploadHandler(c *gin.Context) {
 	})
 }
 
-// UploadAvatarHandler accepts multipart upload and stores file under ./uploads/<userID>/
+// UploadAvatarHandler accepts multipart upload and stores file under ./uploads/
 func UploadAvatarHandler(c *gin.Context) {
-	uid := c.Param("user_id")
+	uid := c.Param("user_id") // FIX: 'uid' is defined here
 	sub := c.GetString("sub")
 	if sub != uid {
 		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"}); return
@@ -95,9 +96,9 @@ func UploadAvatarHandler(c *gin.Context) {
 	if err := c.SaveUploadedFile(file, dest); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "save failed"}); return
 	}
-	publicURL := fmt.Sprintf("/%s/%s", uploadsDir, filename) // static serve in production should be via CDN
+	publicURL := fmt.Sprintf("/%s/%s", uploadsDir, filename) // FIX: 'publicURL' is defined here
 	// Save into profile (temporary until confirm)
-	if err := db.DB.Model(&models.Profile{}).Where("user_id = ?", uid).Update("profile_img_url", publicURL).Error; err != nil {
+	if err := appdb.DB.Model(&models.Profile{}).Where("user_id = ?", uid).Update("profile_img_url", publicURL).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "db update failed"}); return
 	}
 	c.JSON(http.StatusOK, gin.H{"url": publicURL})
@@ -109,16 +110,16 @@ type ConfirmAvatarReq struct {
 }
 
 func ConfirmAvatarHandler(c *gin.Context) {
-	uid := c.Param("user_id")
+	uid := c.Param("user_id") // FIX: 'uid' is defined here
 	sub := c.GetString("sub")
 	if sub != uid {
 		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"}); return
 	}
-	var req ConfirmAvatarReq
+	var req ConfirmAvatarReq // FIX: 'req' is defined here
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()}); return
 	}
-	if err := db.DB.Model(&models.Profile{}).Where("user_id = ?", uid).Update("profile_img_url", req.ProfileImageURL).Error; err != nil {
+	if err := appdb.DB.Model(&models.Profile{}).Where("user_id = ?", uid).Update("profile_img_url", req.ProfileImageURL).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "db update failed"}); return
 	}
 	c.JSON(http.StatusOK, gin.H{"msg": "confirmed"})

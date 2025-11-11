@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"ccsp-futa-alumni/db"
+	"ccsp-futa-alumni/config"
 	"ccsp-futa-alumni/models"
 	"ccsp-futa-alumni/middleware"
 
@@ -31,7 +31,7 @@ func RegisterHandler(c *gin.Context) {
 		Email:        req.Email,
 		PasswordHash: string(h),
 	}
-	if err := db.DB.Create(&u).Error; err != nil {
+	if err := config.DB.Create(&u).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "email taken or invalid"})
 		return
 	}
@@ -40,7 +40,7 @@ func RegisterHandler(c *gin.Context) {
 		UserID:      u.ID,
 		DisplayName: "",
 	}
-	db.DB.Create(&p)
+	config.DB.Create(&p)
 
 	token, _ := middleware.GenerateToken(u.ID.String())
 	c.JSON(http.StatusCreated, gin.H{
@@ -61,7 +61,7 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 	var u models.User
-	if err := db.DB.Where("email = ?", req.Email).First(&u).Error; err != nil {
+	if err :=config.DB.Where("email = ?", req.Email).First(&u).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		return
 	}
@@ -102,7 +102,7 @@ func VerifyOTPHandler(c *gin.Context) {
 func MeHandler(c *gin.Context) {
 	sub := c.GetString("sub")
 	var u models.User
-	if err := db.DB.Preload("Profile").Where("id = ?", sub).First(&u).Error; err != nil {
+	if err := config.DB.Preload("Profile").Where("id = ?", sub).First(&u).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "not found"}); return
 	}
 	c.JSON(http.StatusOK, gin.H{"user": u})

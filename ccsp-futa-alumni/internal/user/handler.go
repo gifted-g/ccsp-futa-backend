@@ -4,7 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"your_project/internal/auth"
+
+	"ccsp-futa-alumni/internal/auth"
 )
 
 type LoginRequest struct {

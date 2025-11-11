@@ -1,12 +1,12 @@
-package db
+package config
 
 import (
+	"ccsp-futa-alumni/models"
 	"fmt"
 	"log"
 	"os"
-	"database/sql"
-	_"github.com/lib/pq" // ✅ PostgreSQL driver
-	"ccsp-futa-alumni/models"
+
+	_ "github.com/lib/pq" // ✅ PostgreSQL driver
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
